@@ -51,7 +51,7 @@ app.get('/sendData',cors(),async (req,res)=>{
       const cursor= collection.find({ $or: [ { userName: userName }, { userEmail: userEmail }] },options);
       let check=true;
       for await(let doc of cursor){
-        console.log(doc);
+       
            if(userName===doc.userName || userEmail===doc.userEmail  ){
             check=false;
             break;
