@@ -80,9 +80,48 @@ app.get('/sendData',cors(),async (req,res)=>{
     
 });
  
+const validateReCaptcha = async (token, secretKey) => {
+  const url = 'https://www.google.com/recaptcha/api.js/siteverify';
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      secret: secretKey,
+      response: token,
+      remoteip: req.ip,
+    }).toString(),
+  });
+  return response.json();
+};
+
+ app.get('/g-recaptcha-validation', cors(), async (req, res) => {
+  const { token } = req.body ? req.body : { token: null };
+  if (!token) {
+    return res.json({ success: false, error: 'Token is required' });
+  }
+  try {
+    const data = await validateReCaptcha(token, process.env.site_secret_Key);
+    console.log(data);
+    if (data.success) {
+      // Send email logic here
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, error: 'reCAPTCHA verification failed' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, error: 'Server error' });
+  }
+});
+
+
  
 
 
-app.listen(5000,()=>{
-    console.log("Server is running");
-})
+
+
+
+
+ 
