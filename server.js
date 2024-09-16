@@ -97,7 +97,7 @@ const validateReCaptcha = async (token, secretKey) => {
 };
 
  app.get('/g-recaptcha-validation', cors(), async (req, res) => {
-  const { token } = req.body ? req.body : { token: null };
+  const { token } = req.query ? req.query : { token: null };
   if (!token) {
     return res.json({ success: false, error: 'Token is required' });
   }
